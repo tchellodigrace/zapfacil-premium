@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        .quebra-texto-cupom { white-space: normal !important; word-break: break-word !important; overflow-wrap: anywhere; }
+        /* Estilo da Trava de Segurança */
         #bloqueioAssinatura {
             display: none;
             position: fixed;
@@ -21,11 +21,12 @@
             padding: 20px;
             text-align: center;
         }
+        .quebra-texto-cupom { white-space: normal !important; word-break: break-word !important; overflow-wrap: anywhere; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col justify-between antialiased">
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col">
 
-    <!-- TELA DE BLOQUEIO / LOGIN / ATIVAÇÃO -->
+    <!-- 1. CAMADA DE SEGURANÇA (TRAVA) -->
     <div id="bloqueioAssinatura">
         <div class="max-w-sm w-full p-6 bg-slate-900 rounded-2xl border border-emerald-500/30 shadow-2xl space-y-4">
             <div id="iconBloqueio" class="text-5xl">🔐</div>
@@ -39,10 +40,11 @@
                 
                 <button id="btnAcao" onclick="processarAcesso()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg transition-all">Entrar</button>
             </div>
-            <p id="msgRodape" class="text-[10px] text-gray-500">Sistema Seguro ZapFácil.</p>
+            <p id="msgRodape" class="text-[10px] text-gray-500 mt-4">Sistema Seguro ZapFácil.</p>
         </div>
     </div>
 
+    <!-- 2. CONTEÚDO ORIGINAL DO SEU SISTEMA -->
     <header class="bg-emerald-600 text-white shadow-md py-3.5 px-4 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <h1 class="text-lg font-bold">💼 ZapFácil ERP</h1>
@@ -50,13 +52,15 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto p-4 lg:col-span-12 w-full flex-grow">
+    <main class="max-w-7xl mx-auto p-4 w-full flex-grow">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <h2 class="text-xl font-bold mb-4">Bem-vindo ao Painel</h2>
-            <p class="text-gray-600">Sistema liberado e operando corretamente.</p>
+            <h2 class="text-xl font-bold mb-4">Painel de Atendimento</h2>
+            <p class="text-gray-600">Bem-vindo! O sistema está funcionando perfeitamente.</p>
+            <!-- AQUI FICAM TODOS OS SEUS INPUTS, TABELAS E BOTÕES QUE VOCÊ JÁ TINHA -->
         </div>
     </main>
 
+    <!-- 3. LÓGICA DE CONTROLE DE ACESSO -->
     <script>
         function verificarEstado() {
             const ehAtivado = localStorage.getItem('zap_ativado') === "true";
@@ -71,6 +75,7 @@
             const desc = document.getElementById('descBloqueio');
 
             if (!ehAtivado) {
+                // FLUXO DE ATIVAÇÃO (PRIMEIRO ACESSO)
                 tela.style.display = "flex";
                 titulo.innerText = "Ativação do Sistema";
                 desc.innerText = "Insira a chave recebida e crie uma senha para seu uso pessoal.";
@@ -79,6 +84,7 @@
                 inputLogin.classList.add('hidden');
                 btn.innerText = "Ativar e Acessar";
             } else if (!sessaoAtiva) {
+                // FLUXO DE LOGIN (APÓS FECHAR/ABRIR)
                 tela.style.display = "flex";
                 titulo.innerText = "Login de Acesso";
                 desc.innerText = "Bem-vindo de volta! Digite sua senha.";
@@ -87,6 +93,7 @@
                 inputLogin.classList.remove('hidden');
                 btn.innerText = "Entrar no Sistema";
             } else {
+                // SISTEMA LIBERADO
                 tela.style.display = "none";
             }
         }
@@ -95,13 +102,13 @@
             const ehAtivado = localStorage.getItem('zap_ativado') === "true";
 
             if (!ehAtivado) {
+                // TENTATIVA DE ATIVAÇÃO
                 const chave = document.getElementById('inputChaveAtivacao').value.trim();
                 const senha = document.getElementById('inputDefinirSenha').value.trim();
 
                 if (!chave || !senha) return alert("Preencha a chave e a senha!");
                 
                 try {
-                    // Decodifica a chave para verificar se é válida
                     const decodificada = atob(chave); 
                     
                     if (decodificada.startsWith("ZAPFACIL-")) {
@@ -110,13 +117,14 @@
                         sessionStorage.setItem('zap_sessao_ativa', 'true');
                         location.reload();
                     } else {
-                        alert("Chave de ativação inválida ou formatada incorretamente.");
+                        alert("Chave de ativação inválida.");
                     }
                 } catch (e) {
-                    alert("Erro: A chave fornecida não está em um formato válido.");
+                    alert("Chave inválida ou formatada incorretamente.");
                 }
 
             } else {
+                // TENTATIVA DE LOGIN
                 const senhaDigitada = document.getElementById('inputSenhaLogin').value.trim();
                 const senhaCorreta = localStorage.getItem('zap_senha_acesso');
 
@@ -129,6 +137,7 @@
             }
         }
 
+        // Executa ao carregar a página
         window.onload = verificarEstado;
     </script>
 </body>
