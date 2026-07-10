@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZapFácil Pro - ERP Mobile</title>
+    <title>ZapFácil Pro - ERP Mobile (PREMIUM)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* Força quebra de linha correta no cupom para evitar cortes */
         .quebra-texto-cupom {
             white-space: normal !important;
             word-break: break-word !important;
             overflow-wrap: anywhere;
         }
-        /* Bloqueio de Tela Cheia */
         #bloqueioAssinatura {
             display: none;
             position: fixed;
@@ -34,13 +32,13 @@
     <div id="bloqueioAssinatura">
         <div class="max-w-md p-6 bg-slate-900 rounded-2xl border border-red-500/30 shadow-2xl space-y-4">
             <span class="text-5xl">⚠️</span>
-            <h1 class="text-xl font-bold text-red-400 uppercase tracking-wider">Aplicativo Bloqueado</h1>
-            <p class="text-sm text-gray-400">Sua licença de uso ou mensalidade expirou, ou o código de ativação é inválido.</p>
+            <h1 id="tituloBloqueio" class="text-xl font-bold text-red-400 uppercase tracking-wider">Aplicativo Bloqueado</h1>
+            <p id="descBloqueio" class="text-sm text-gray-400">Sua licença de uso ou mensalidade expirou, ou o código de ativação é inválido.</p>
             <div class="bg-slate-950 p-3 rounded-lg border border-gray-800">
-                <input id="inputChaveRenovacao" type="text" placeholder="Insira a nova Chave de Liberação" class="w-full text-center p-2 rounded bg-slate-900 text-white border border-gray-700 text-xs font-mono outline-none">
-                <button onclick="salvarNovaChave()" class="w-full bg-emerald-600 hover:bg-emerald-700 font-bold py-2 px-4 rounded mt-2 text-xs transition-all">Ativar Sistema</button>
+                <input id="inputChaveRenovacao" type="text" placeholder="Insira a Chave de Liberação" class="w-full text-center p-2 rounded bg-slate-900 text-white border border-gray-700 text-xs font-mono outline-none">
+                <button onclick="salvarNovaChave()" class="w-full bg-emerald-600 hover:bg-emerald-700 font-bold py-2 px-4 rounded mt-2 text-xs transition-all">Entrar no Sistema</button>
             </div>
-            <p class="text-[11px] text-gray-500">Solicite sua chave pix de renovação com o administrador do ZapFácil.</p>
+            <p class="text-[11px] text-gray-500">Solicite sua chave de acesso ou renovação com o administrador do ZapFácil.</p>
         </div>
     </div>
 
@@ -50,7 +48,7 @@
                 <h1 class="text-lg font-bold tracking-tight">💼 ZapFácil ERP</h1>
                 <p id="labelValidadeLicenca" class="text-[9px] text-emerald-100 font-mono"></p>
             </div>
-            <span class="text-[10px] bg-emerald-500 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">V10.2 PRO</span>
+            <span class="text-[10px] bg-emerald-500 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">PREMIUM PRO</span>
         </div>
     </header>
 
@@ -352,25 +350,34 @@
     </footer>
 
     <script>
-        // --- CHAVE DE SEGURANÇA ANTICALOTE ---
+        // --- SISTEMA DE SESSÃO AUTOMÁTICA (FECHOU O APP/ABA = DESLOGA) ---
         function checarLicencaValida() {
             const chaveAtiva = localStorage.getItem('zap_licenca_chave') || "";
+            const sessaoAtiva = sessionStorage.getItem('zap_sessao_ativa') === "true"; 
+            
             const telaBloqueio = document.getElementById('bloqueioAssinatura');
             const labelValidade = document.getElementById('labelValidadeLicenca');
+            const tituloBloqueio = document.getElementById('tituloBloqueio');
+            const descBloqueio = document.getElementById('descBloqueio');
+            const inputChave = document.getElementById('inputChaveRenovacao');
 
             if (!chaveAtiva) {
                 telaBloqueio.style.display = "flex";
+                tituloBloqueio.innerText = "⚠️ SISTEMA BLOQUEADO";
+                descBloqueio.innerText = "Insira seu código de ativação para liberar o uso do ZapFácil.";
+                inputChave.placeholder = "Insira a Chave de Liberação";
                 return false;
             }
 
             try {
-                const decodificada = atob(chaveAtiva); // Formato esperado: ZAPFACIL-AAAAMMDD
+                const decodificada = atob(chaveAtiva);
                 if (!decodificada.startsWith("ZAPFACIL-")) {
                     telaBloqueio.style.display = "flex";
+                    tituloBloqueio.innerText = "⚠️ CHAVE INVÁLIDA";
                     return false;
                 }
 
-                const dataStr = decodificada.split("-")[1]; // Pega AAAAMMDD
+                const dataStr = decodificada.split("-")[1];
                 const ano = parseInt(dataStr.substring(0,4));
                 const mes = parseInt(dataStr.substring(4,6)) - 1;
                 const dia = parseInt(dataStr.substring(6,8));
@@ -380,12 +387,24 @@
 
                 if (hoje > dataValidade) {
                     telaBloqueio.style.display = "flex";
+                    tituloBloqueio.innerText = "⚠️ LICENÇA EXPIRADA";
+                    descBloqueio.innerText = "Sua assinatura expirou. Insira uma nova chave de renovação.";
+                    inputChave.placeholder = "Insira a nova Chave Pix de Liberação";
                     return false;
-                } else {
-                    telaBloqueio.style.display = "none";
-                    labelValidade.innerText = `Licença ativa até: ${dia.toString().padStart(2,'0')}/${(mes+1).toString().padStart(2,'0')}/${ano}`;
-                    return true;
                 }
+
+                if (!sessaoAtiva) {
+                    telaBloqueio.style.display = "flex";
+                    tituloBloqueio.innerText = "🔐 SISTEMA RESTRITO";
+                    descBloqueio.innerText = "Por segurança, digite sua senha/chave de acesso para entrar novamente.";
+                    inputChave.placeholder = "Digite sua Chave/Senha de Acesso";
+                    return false;
+                }
+
+                telaBloqueio.style.display = "none";
+                labelValidade.innerText = `Licença ativa até: ${dia.toString().padStart(2,'0')}/${(mes+1).toString().padStart(2,'0')}/${ano}`;
+                return true;
+
             } catch (e) {
                 telaBloqueio.style.display = "flex";
                 return false;
@@ -394,13 +413,43 @@
 
         function salvarNovaChave() {
             const ch = document.getElementById('inputChaveRenovacao').value.trim();
-            if(!ch) return alert("Insira uma chave!");
-            localStorage.setItem('zap_licenca_chave', ch);
-            if(checarLicencaValida()) {
-                alert("Sistema ativado com absoluto sucesso!");
-                window.location.reload();
+            if(!ch) return alert("Por favor, digite seu código de acesso!");
+
+            const chaveSalva = localStorage.getItem('zap_licenca_chave');
+
+            if (chaveSalva) {
+                if (ch === chaveSalva || ch === atob(chaveSalva)) {
+                    sessionStorage.setItem('zap_sessao_ativa', 'true');
+                    document.getElementById('inputChaveRenovacao').value = "";
+                    window.location.reload();
+                    return;
+                } else {
+                    localStorage.setItem('zap_licenca_chave', ch);
+                    sessionStorage.setItem('zap_sessao_ativa', 'true');
+                    
+                    if(checarLicencaValida()) {
+                        alert("Nova chave validada e ativada com sucesso!");
+                        document.getElementById('inputChaveRenovacao').value = "";
+                        window.location.reload();
+                    } else {
+                        localStorage.setItem('zap_licenca_chave', chaveSalva);
+                        sessionStorage.removeItem('zap_sessao_ativa');
+                        alert("Código incorreto ou inválido!");
+                    }
+                    return;
+                }
             } else {
-                alert("Chave inválida ou já expirada!");
+                localStorage.setItem('zap_licenca_chave', ch);
+                sessionStorage.setItem('zap_sessao_ativa', 'true');
+                if(checarLicencaValida()) {
+                    alert("Sistema ativado com absoluto sucesso!");
+                    document.getElementById('inputChaveRenovacao').value = "";
+                    window.location.reload();
+                } else {
+                    localStorage.removeItem('zap_licenca_chave');
+                    sessionStorage.removeItem('zap_sessao_ativa');
+                    alert("Chave de ativação inválida!");
+                }
             }
         }
 
@@ -537,7 +586,7 @@
         function obterHistorico() { return JSON.parse(localStorage.getItem('zap_historico') || '[]'); }
         function salvarHistorico(dados) { localStorage.setItem('zap_historico', JSON.stringify(dados)); }
 
-        // --- SISTEMA CRM DE CLIENTES ---
+        // --- CRM CLIENTES ---
         function obterCRM() { return JSON.parse(localStorage.getItem('zap_crm') || '[]'); }
         function salvarCRM(dados) { localStorage.setItem('zap_crm', JSON.stringify(dados)); }
 
@@ -596,7 +645,7 @@
             }
         }
 
-        // --- SISTEMA DE CATÁLOGO DE SERVIÇOS ---
+        // --- CATÁLOGO DE SERVIÇOS ---
         function obterCatalogo() { return JSON.parse(localStorage.getItem('zap_catalogo') || '[]'); }
         function salvarCatalogo(dados) { localStorage.setItem('zap_catalogo', JSON.stringify(dados)); }
 
@@ -655,9 +704,8 @@
             }
         }
 
-        // --- EMISSÃO E CÁLCULO DE CUPOM AUTOMATIZADO ---
+        // --- PROCESSAR E GERAR NOTA ---
         function gerarCupomAutomatizado() {
-            // Salvar configurações globais da empresa
             const nomeEmp = document.getElementById('nomeEmpresa').value.trim();
             const endEmp = document.getElementById('enderecoEmpresa').value.trim();
             const telEmp = document.getElementById('telefoneEmpresa').value.trim();
@@ -668,7 +716,6 @@
             localStorage.setItem('zap_telefoneEmpresa', telEmp);
             localStorage.setItem('zap_linkBase', linkBase);
 
-            // Interface do Cupom
             document.getElementById('cupomEmpresa').innerText = nomeEmp || "EMISSOR NÃO CONFIGURADO";
             
             const cEnd = document.getElementById('cupomEndereco');
@@ -677,7 +724,6 @@
             const cTel = document.getElementById('cupomTelefone');
             if(telEmp) { cTel.innerText = telEmp; cTel.classList.remove('hidden'); } else { cTel.classList.add('hidden'); }
 
-            // Dados da Venda/Atendimento
             const cliente = document.getElementById('nomeCliente').value.trim() || "CONSUMIDOR PADRÃO";
             const doc = document.getElementById('docCliente').value.trim();
             const fPagto = document.getElementById('formaPagamento').value;
@@ -689,10 +735,8 @@
 
             if(!produto || valor <= 0) return alert("Erro: Defina uma descrição de serviço e um valor base.");
 
-            // Cálculos
             const totalGeral = valor + acrescimo - desconto;
 
-            // Injeta dados no Cupom Visual
             const agora = new Date();
             document.getElementById('cupomData').innerText = `DATA: ${agora.toLocaleDateString('pt-BR')}`;
             document.getElementById('cupomHora').innerText = `HORA: ${agora.toLocaleTimeString('pt-BR')}`;
@@ -704,7 +748,6 @@
             document.getElementById('cupomProduto').innerText = produto;
             document.getElementById('cupomValorItem').innerText = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             
-            // Subtotais condicionais
             if(desconto > 0 || acrescimo > 0) {
                 document.getElementById('linhaSubtotal').classList.remove('hidden');
                 document.getElementById('cupomSubtotal').innerText = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -730,7 +773,6 @@
             document.getElementById('cupomValorPago').innerText = totalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             document.getElementById('cupomTotal').innerText = totalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-            // Atualiza o Badge de Situação
             const badge = document.getElementById('cupomBadgeStatus');
             if(situacao === "PAGO") {
                 badge.innerText = "COMPROVANTE DE PAGAMENTO";
@@ -740,7 +782,6 @@
                 badge.className = "text-center font-sans font-black text-[10px] py-1 rounded mb-3 tracking-widest text-white bg-amber-500";
             }
 
-            // Tratamento das ações de PIX e Links externos
             const linhaPix = document.getElementById('linhaCupomPix');
             const containerPixExt = document.getElementById('containerPixExterno');
             const btnCopiarPix = document.getElementById('btnCopiarPix');
@@ -768,7 +809,6 @@
                 chavePixAtual = "";
             }
 
-            // Link de Pagamento Mercado Pago
             const btnLink = document.getElementById('btnLinkPagamento');
             if(linkBase) {
                 linkPagamentoAtual = `${linkBase}?amount=${totalGeral.toFixed(2)}`;
@@ -778,12 +818,10 @@
                 btnLink.classList.add('hidden');
             }
 
-            // Desbloquear Botão WhatsApp
             const btnWpp = document.getElementById('btnEnviar');
             btnWpp.removeAttribute('disabled');
             btnWpp.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2 text-xs uppercase tracking-wider transition-all shadow cursor-pointer";
 
-            // Guardar no Histórico Financeiro
             const historico = obterHistorico();
             historico.unshift({
                 dataHora: `${agora.toLocaleDateString('pt-BR')} ${agora.toLocaleTimeString('pt-BR')}`,
@@ -796,7 +834,7 @@
             renderizarHistorico();
         }
 
-        // --- COMPONENTE DE HISTÓRICO FINANCEIRO ---
+        // --- HISTÓRICO FINANCEIRO ---
         function renderizarHistorico() {
             const hist = obterHistorico();
             const tbody = document.getElementById('listaHistoricoVendas');
@@ -842,7 +880,7 @@
             }
         }
 
-        // --- ENVIAR NOTA FORMATADA VIA WHATSAPP ---
+        // --- WHATSAPP & IMAGEM ---
         function enviarDireto() {
             const nomeEmp = localStorage.getItem('zap_nomeEmpresa') || "Empresa";
             const status = document.getElementById('cupomBadgeStatus').innerText;
@@ -860,24 +898,15 @@
             msg += `💳 *${forma}*\n`;
             msg += `💰 *VALOR TOTAL:* ${total}\n\n`;
 
-            if(chavePixAtual) {
-                msg += `🔑 *Chave PIX para pagamento:* \n\`${extrairChaveLimpa(chavePixAtual)}\`\n\n`;
-            }
-
-            if(linkPagamentoAtual) {
-                msg += `🔗 *Link para pagamento online:* \n${linkPagamentoAtual}\n\n`;
-            }
+            if(chavePixAtual) msg += `🔑 *Chave PIX para pagamento:* \n\`${extrairChaveLimpa(chavePixAtual)}\`\n\n`;
+            if(linkPagamentoAtual) msg += `🔗 *Link para pagamento online:* \n${linkPagamentoAtual}\n\n`;
 
             msg += `*Agradecemos a preferência!*`;
-
-            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // --- EXPORTAR CUPOM EM FORMATO IMAGEM (HTML2CANVAS) ---
         function baixarCupomImagem() {
             const container = document.getElementById('cupomFiscalContainer');
-            // Alerta visual de processamento
             const btn = document.getElementById('btnSalvarImagem');
             const textoOriginal = btn.innerText;
             btn.innerText = "⏳ PROCESSANDO...";
@@ -888,7 +917,6 @@
                 link.download = `Recibo_${Date.now()}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                
                 btn.innerText = textoOriginal;
                 btn.disabled = false;
             }).catch(err => {
