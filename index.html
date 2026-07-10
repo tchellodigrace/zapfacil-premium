@@ -2,547 +2,121 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZapFácil Pro - ERP Mobile - Sistema de Mensagens</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: #030712;
-            color: #f3f4f6;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .auth-card {
-            background-color: #0b0f19;
-            border: 1px solid #1f2937;
-            border-radius: 20px;
-            padding: 35px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            text-align: center;
-        }
-
-        .badge-version {
-            display: inline-block;
-            background-color: rgba(167, 139, 250, 0.1);
-            color: #a78bfa;
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(167, 139, 250, 0.2);
-        }
-
-        h2 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #ffffff;
-        }
-
-        h2 span {
-            color: #a78bfa;
-        }
-
-        p.subtitle {
-            font-size: 13px;
-            color: #9ca3af;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .form-group {
-            text-align: left;
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 11px;
-            font-weight: 600;
-            color: #9ca3af;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 13px 16px;
-            background-color: #111827;
-            border: 1px solid #374151;
-            border-radius: 12px;
-            color: #ffffff;
-            font-size: 14px;
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        .form-group input:focus {
-            border-color: #a78bfa;
-            box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
-        }
-
-        .btn-action {
-            width: 100%;
-            background-color: #a78bfa;
-            color: #ffffff;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 5px;
-        }
-
-        .btn-action:hover {
-            background-color: #8b5cf6;
-            transform: translateY(-1px);
-        }
-
-        .btn-action:active {
-            transform: translateY(0);
-        }
-
-        .auth-links {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            font-size: 12px;
-        }
-
-        .auth-links a {
-            color: #9ca3af;
-            text-decoration: none;
-            transition: color 0.2s;
-            cursor: pointer;
-        }
-
-        .auth-links a:hover {
-            color: #a78bfa;
-            text-decoration: underline;
-        }
-
-        /* INTERFACE DO APLICATIVO APÓS LOGAR */
-        #telaAppPrincipal {
-            width: 100%;
-            max-width: 1000px;
-            background-color: #0b0f19;
-            border: 1px solid #1f2937;
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .app-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #1f2937;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-
-        .user-badge {
-            background-color: #111827;
-            border: 1px solid #374151;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-logout {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-logout:hover {
-            background-color: #ef4444;
-            color: white;
-        }
-
-        .demo-content {
-            background-color: #111827;
-            border: 1px solid #1f2937;
-            border-radius: 16px;
-            padding: 40px;
-            text-align: center;
-            color: #9ca3af;
-        }
-
-        .license-footer {
-            margin-top: 30px;
-            font-size: 11px;
-            color: #6b7280;
-            display: flex;
-            justify-content: space-between;
-            background-color: rgba(17, 24, 39, 0.5);
-            padding: 12px 20px;
-            border-radius: 10px;
-        }
-
-        .screen {
-            display: none;
-        }
-
-        .active-screen {
-            display: block !important;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZapFácil Pro - ERP Mobile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-center items-center p-4 antialiased">
 
-    <!-- CARD COLETIVO DE AUTENTICAÇÃO -->
-    <div id="containerAutenticacao" class="auth-card screen active-screen">
-        
-        <!-- TELA 1: ATIVAÇÃO DE LICENÇA (PRIMEIRO ACESSO) -->
-        <div id="telaAtivacao" class="screen">
-            <div class="badge-version">🚀 Versão Premium</div>
-            <h2>Ative seu <span>Sistema</span></h2>
-            <p class="subtitle">Insira a chave de ativação fornecida pelo administrador para liberar seu acesso comercial.</p>
-            
-            <div class="form-group">
-                <label>Chave de Ativação (Base64)</label>
-                <input id="inputChave" type="text" placeholder="ZAPFACIL-..." autocomplete="off">
-            </div>
-            
-            <button onclick="processarAtivacao()" class="btn-action">⚡ Validar Licença</button>
+    <!-- 1. TELA DE LOGIN PROTEGIDA (O ID fica na raiz para sumir por completo) -->
+    <div id="areaLogin" class="w-full max-w-md p-6 bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl space-y-4">
+        <div class="text-center">
+            <h1 class="text-2xl font-black text-white tracking-wide">⚡ ZapFácil Pro</h1>
+            <p class="text-xs text-slate-400 mt-1">Insira suas credenciais para acessar o ERP Premium</p>
         </div>
-
-        <!-- TELA 2: CRIAÇÃO DE CONTA LOCAL -->
-        <div id="telaCadastro" class="screen">
-            <div class="badge-version">🚀 Versão Premium</div>
-            <h2>Criar seu <span>Acesso</span></h2>
-            <p class="subtitle">Licença aceita! Configure um usuário e senha rápidos para não precisar usar aquela chave grande sempre.</p>
-            
-            <div class="form-group">
-                <label>Nome de Usuário ou E-mail</label>
-                <input id="regUser" type="text" placeholder="Ex: cliente_zap">
+        <div class="space-y-3">
+            <div>
+                <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">E-mail de Acesso</label>
+                <input id="loginEmail" type="email" placeholder="seuemail@gmail.com" class="w-full p-2.5 rounded-lg bg-slate-800 text-white border border-slate-700 text-sm outline-none focus:border-indigo-500">
             </div>
-            <div class="form-group">
-                <label>Sua Senha</label>
-                <input id="regPass" type="password" placeholder="Mínimo 4 caracteres">
+            <div>
+                <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Senha</label>
+                <input id="loginSenha" type="password" placeholder="••••••••" class="w-full p-2.5 rounded-lg bg-slate-800 text-white border border-slate-700 text-sm outline-none focus:border-indigo-500">
             </div>
-            <div class="form-group">
-                <label>Confirmar Senha</label>
-                <input id="regPassConf" type="password" placeholder="Repita a senha">
-            </div>
-            
-            <button onclick="processarCadastro()" class="btn-action">💾 Salvar e Entrar</button>
+            <button onclick="executarLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg text-xs uppercase tracking-wider transition-all shadow-lg">Entrar no Sistema</button>
         </div>
-
-        <!-- TELA 3: LOGIN DIÁRIO -->
-        <div id="telaLoginCliente" class="screen">
-            <div class="badge-version">🚀 Versão Premium</div>
-            <h2>Acessar <span>Painel</span></h2>
-            <p class="subtitle">Insira suas credenciais locais para entrar na sua ferramenta automatizada.</p>
-            
-            <div class="form-group">
-                <label>Usuário ou E-mail</label>
-                <input id="loginUser" type="text" placeholder="Digite seu usuário..." onkeydown="if(event.key === 'Enter') processarLogin()">
-            </div>
-            <div class="form-group">
-                <label>Senha de Acesso</label>
-                <input id="loginPass" type="password" placeholder="Digite sua senha..." onkeydown="if(event.key === 'Enter') processarLogin()">
-            </div>
-            
-            <button onclick="processarLogin()" class="btn-action">🔓 Entrar no Sistema</button>
-            
-            <div class="auth-links">
-                <a onclick="irParaTelaRescue()">Esqueci minha conta / senha</a>
-            </div>
-        </div>
-
-        <!-- TELA 4: RECUPERAÇÃO DE ACESSO -->
-        <div id="telaRescue" class="screen">
-            <div class="badge-version">Recuperação</div>
-            <h2>Resgatar <span>Acesso</span></h2>
-            <p class="subtitle">Esqueceu sua senha? Cole sua Chave de Ativação original abaixo para redefinir suas credenciais.</p>
-            
-            <div class="form-group">
-                <label>Chave de Ativação Original</label>
-                <input id="rescueChave" type="text" placeholder="Insira seu código Base64...">
-            </div>
-            
-            <button onclick="validarChaveRescue()" class="btn-action">🔍 Verificar Chave</button>
-            
-            <!-- Bloco oculto de redefinição -->
-            <div id="boxRedefinir" style="display: none; margin-top: 20px; border-top: 1px solid #1f2937; padding-top: 20px;">
-                <p id="lblUsuarioIdentificado" style="font-size: 13px; color: #a78bfa; font-weight: bold; margin-bottom: 15px;"></p>
-                <div class="form-group">
-                    <label>Nova Senha</label>
-                    <input id="rescueNovaSenha" type="password" placeholder="Digite a nova senha">
-                </div>
-                <button onclick="salvarNovaSenhaResgatada()" class="btn-action" style="background-color: #059669;">🔄 Alterar Senha</button>
-            </div>
-
-            <div class="auth-links">
-                <a onclick="verificarEstadoAcesso()">⬅️ Voltar para o Login</a>
-            </div>
-        </div>
-
     </div>
 
-    <!-- 5. TELA REAL DO APLICATIVO (LIBERADO) -->
-    <div id="telaAppPrincipal">
-        <div class="app-header">
+    <!-- 2. ÁREA PROTEGIDA DO SISTEMA PREMIUM -->
+    <div id="areaSistema" class="w-full max-w-5xl space-y-4 hidden mx-auto">
+        
+        <!-- Topo Administrativo -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-900 p-4 rounded-xl border border-slate-800 shadow-md">
             <div>
-                <h2 style="font-size: 20px;">ZapFácil Pro - ERP Mobile <span>Ativo</span></h2>
-                <p style="font-size: 12px; color: #9ca3af; margin-top: 2px;">Sistema operando normalmente</p>
+                <h1 class="text-base font-bold text-white flex items-center gap-2">
+                    ZapFácil Pro - ERP Mobile <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 font-medium">Ativo</span>
+                </h1>
+                <p class="text-xs text-slate-400 mt-0.5">Sistema operando normalmente</p>
             </div>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div class="user-badge">
-                    <span>👤</span> <strong id="lblNomeUsuario" style="color: #ffffff;">admin</strong>
+            <div class="flex items-center gap-2">
+                <div class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs font-medium text-slate-200">
+                    <span>👤</span>
+                    <span id="labelUsuarioEmail">...</span>
                 </div>
-                <button onclick="fazerLogoutCliente()" class="btn-logout">🚪 Desconectar</button>
+                <button onclick="executarLogout()" class="bg-red-950/40 hover:bg-red-950/60 text-red-400 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all">
+                    Desconectar
+                </button>
             </div>
         </div>
 
-        <!-- CONTEÚDO SIMULADO DO SEU ROBÔ / EXTENSÃO -->
-        <div class="demo-content">
-            <div style="font-size: 48px; margin-bottom: 15px;">🚀</div>
-            <h3 style="color: #ffffff; margin-bottom: 10px; font-size: 18px;">Seu Robô Comercial está Pronto para Rodar!</h3>
-            <p style="font-size: 13px; max-width: 500px; margin: 0 auto; line-height: 1.6;">Aqui dentro fica toda a lógica da sua extensão ou automação do WhatsApp. O sistema de proteção bloqueou tudo com segurança até este momento.</p>
+        <!-- Conteúdo Principal do Robô Premium -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl flex flex-col items-center justify-center text-center space-y-6 min-h-[350px]">
+            <div class="text-6xl text-slate-100">🚀</div>
+            
+            <div class="space-y-2 max-w-xl">
+                <h2 class="text-2xl font-extrabold text-white tracking-tight">Seu Robô Comercial está Pronto para Rodar!</h2>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Aqui dentro fica toda a lógica da sua extensão ou automação do WhatsApp. O sistema de proteção bloqueou tudo com segurança até este momento.
+                </p>
+            </div>
+
+            <!-- Rodapé da Licença integrado perfeitamente -->
+            <div class="w-full border-t border-slate-800/60 pt-4 mt-4 flex flex-col sm:flex-row justify-between items-center gap-2 text-[11px] text-slate-500 font-medium">
+                <div class="flex items-center gap-1.5">
+                    <span>🔒</span> Dispositivo Licenciado Seguramente
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <span>📅</span> Vencimento da Licença: <span class="text-slate-400 font-bold">09/08/2026</span>
+                </div>
+            </div>
         </div>
 
-        <div class="license-footer">
-            <div>🔒 Dispositivo Licenciado Seguramente</div>
-            <div>📅 Vencimento da Licença: <strong id="lblDataVencimento" style="color: #ffffff;">--/--/----</strong></div>
-        </div>
     </div>
 
     <script>
-        const STORAGE_PREFIX = "z_prem" + "_";
-
-        document.addEventListener("DOMContentLoaded", function() {
-            verificarEstadoAcesso();
-        });
-
-        function ocultarTodasTelas() {
-            const telas = document.querySelectorAll('.screen');
-            telas.forEach(t => t.style.display = 'none');
-        }
-
-        function mostrarTela(id) {
-            document.getElementById(id).style.display = 'block';
-        }
-
-        function verificarEstadoAcesso() {
-            const ativado = localStorage.getItem(STORAGE_PREFIX + 'ativado');
-            const logado = sessionStorage.getItem(STORAGE_PREFIX + 'sessao_ativa');
-
-            ocultarTodasTelas();
-
-            if (!ativado) {
-                document.getElementById('containerAutenticacao').style.display = 'block';
-                mostrarTela('telaAtivacao');
-            } else {
-                const temConta = localStorage.getItem(STORAGE_PREFIX + 'usuario');
-                if (!temConta) {
-                    document.getElementById('containerAutenticacao').style.display = 'block';
-                    mostrarTela('telaCadastro');
-                } else if (logado === 'true') {
-                    if (verificarLicencaExpirada()) return;
-                    
-                    document.getElementById('containerAutenticacao').style.display = 'none';
-                    document.getElementById('telaAppPrincipal').style.display = 'block';
-                    
-                    document.getElementById('lblNomeUsuario').innerText = localStorage.getItem(STORAGE_PREFIX + 'usuario');
-                    document.getElementById('lblDataVencimento').innerText = localStorage.getItem(STORAGE_PREFIX + 'venc_visivel');
-                } else {
-                    document.getElementById('containerAutenticacao').style.display = 'block';
-                    mostrarTela('telaLoginCliente');
-                }
-            }
-        }
-
-        function verificarLicencaExpirada() {
-            const vencRaw = localStorage.getItem(STORAGE_PREFIX + 'venc_raw');
-            if (vencRaw) {
-                const ano = parseInt(vencRaw.substring(0, 4));
-                const mes = parseInt(vencRaw.substring(4, 6)) - 1;
-                const dia = parseInt(vencRaw.substring(6, 8));
-                
-                const dataVencObj = new Date(ano, mes, dia, 23, 59, 59);
-                const agora = new Date();
-                
-                if (dataVencObj < agora) {
-                    alert("Atenção: Sua licença de uso expirou! Por favor, fale com o suporte para renovar sua chave.");
-                    localStorage.removeItem(STORAGE_PREFIX + 'ativado');
-                    localStorage.removeItem(STORAGE_PREFIX + 'chave');
-                    localStorage.removeItem(STORAGE_PREFIX + 'venc_raw');
-                    localStorage.removeItem(STORAGE_PREFIX + 'venc_visivel');
-                    verificarEstadoAcesso();
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        function processarAtivacao() {
-            const chave = document.getElementById('inputChave').value.trim();
-            if (!chave) {
-                alert("Por favor, digite a chave de ativação!");
-                return;
-            }
-
-            try {
-                const stringDecodificada = atob(chave);
-                
-                if (!stringDecodificada.startsWith("ZAPFACIL-")) {
-                    alert("Esta chave não pertence ao ecossistema ZapFácil!");
-                    return;
-                }
-
-                const dataStr = stringDecodificada.substring(9, 17);
-                const ano = parseInt(dataStr.substring(0, 4));
-                const mes = parseInt(dataStr.substring(4, 6)) - 1;
-                const dia = parseInt(dataStr.substring(6, 8));
-
-                const dataVencObj = new Date(ano, mes, dia, 23, 59, 59);
-                const agora = new Date();
-
-                if (dataVencObj < agora) {
-                    alert("Não foi possível ativar: Esta chave já está expirada!");
-                    return;
-                }
-
-                const visualData = `${String(dia).padStart(2, '0')}/${String(mes + 1).padStart(2, '0')}/${ano}`;
-
-                localStorage.setItem(STORAGE_PREFIX + 'ativado', 'true');
-                localStorage.setItem(STORAGE_PREFIX + 'chave', chave);
-                localStorage.setItem(STORAGE_PREFIX + 'venc_raw', dataStr);
-                localStorage.setItem(STORAGE_PREFIX + 'venc_visivel', ano === 2099 ? "Vitalício" : visualData);
-
-                alert("🚀 Chave autenticada com absoluto sucesso!");
-                verificarEstadoAcesso();
-
-            } catch (error) {
-                alert("Erro de validação: O código inserido está corrompido ou é inválido!");
-            }
-        }
-
-        function processarCadastro() {
-            const user = document.getElementById('regUser').value.trim();
-            const pass = document.getElementById('regPass').value;
-            const passConf = document.getElementById('regPassConf').value;
-
-            if (!user || !pass) {
-                alert("Preencha todos os campos obrigatórios!");
-                return;
-            }
-            if (pass.length < 4) {
-                alert("A senha deve ter no mínimo 4 caracteres!");
-                return;
-            }
-            if (pass !== passConf) {
-                alert("As senhas digitadas não batem! Verifique.");
-                return;
-            }
-
-            localStorage.setItem(STORAGE_PREFIX + 'usuario', user);
-            localStorage.setItem(STORAGE_PREFIX + 'senha', pass);
+        function verificarAutenticacao() {
+            const usuarioLogado = localStorage.getItem('zap_premium_usuario');
+            const areaLogin = document.getElementById('areaLogin');
+            const areaSistema = document.getElementById('areaSistema');
             
-            sessionStorage.setItem(STORAGE_PREFIX + 'sessao_ativa', 'true');
+            if (usuarioLogado) {
+                if (areaLogin) areaLogin.classList.add('hidden');
+                if (areaSistema) areaSistema.classList.remove('hidden');
+                document.getElementById('labelUsuarioEmail').innerText = usuarioLogado;
+                
+                document.body.className = "bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-start p-4 md:p-8 antialiased";
+            } else {
+                if (areaLogin) areaLogin.classList.remove('hidden');
+                if (areaSistema) areaSistema.classList.add('hidden');
+                
+                document.body.className = "bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-center items-center p-4 antialiased";
+            }
+        }
+
+        function executarLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const senha = document.getElementById('loginSenha').value.trim();
             
-            alert("🎯 Conta configurada com sucesso!");
-            verificarEstadoAcesso();
-        }
-
-        function processarLogin() {
-            if (verificarLicencaExpirada()) return;
-
-            const user = document.getElementById('loginUser').value.trim();
-            const pass = document.getElementById('loginPass').value;
-
-            const userSalvo = localStorage.getItem(STORAGE_PREFIX + 'usuario');
-            const passSalva = localStorage.getItem(STORAGE_PREFIX + 'senha');
-
-            if (user === userSalvo && pass === passSalva) {
-                sessionStorage.setItem(STORAGE_PREFIX + 'sessao_ativa', 'true');
-                verificarEstadoAcesso();
-            } else {
-                alert("Usuário ou senha inválidos!");
-            }
-        }
-
-        function irParaTelaRescue() {
-            ocultarTodasTelas();
-            document.getElementById('boxRedefinir').style.display = 'none';
-            document.getElementById('rescueChave').value = '';
-            mostrarTela('telaRescue');
-        }
-
-        function validarChaveRescue() {
-            const chaveDigitada = document.getElementById('rescueChave').value.trim();
-            const chaveMestraSalva = localStorage.getItem(STORAGE_PREFIX + 'chave');
-
-            if (!chaveDigitada) {
-                alert("Insira a chave do produto!");
+            if (!email || !senha) {
+                alert("Preencha todos os campos!");
                 return;
             }
-
-            if (chaveDigitada === chaveMestraSalva) {
-                const usuario = localStorage.getItem(STORAGE_PREFIX + 'usuario');
-                document.getElementById('boxRedefinir').style.display = 'block';
-                document.getElementById('lblUsuarioIdentificado').innerText = `Conta localizada: ${usuario}`;
-                document.getElementById('rescueNovaSenha').focus();
+            
+            if (senha === "123456") { 
+                localStorage.setItem('zap_premium_usuario', email);
+                verificarAutenticacao();
             } else {
-                alert("A chave digitada não corresponde à chave ativa deste dispositivo!");
+                alert("Senha inválida ou incorreta!");
             }
         }
 
-        function salvarNovaSenhaResgatada() {
-            const novaSenha = document.getElementById('rescueNovaSenha').value;
-            if (novaSenha.length < 4) {
-                alert("A nova senha precisa ter pelo menos 4 caracteres!");
-                return;
-            }
-
-            localStorage.setItem(STORAGE_PREFIX + 'senha', novaSenha);
-            alert("🟢 Perfeito! Senha redefinida com sucesso. Faça login agora.");
-            verificarEstadoAcesso();
-        }
-
-        function fazerLogoutCliente() {
-            sessionStorage.removeItem(STORAGE_PREFIX + 'sessao_ativa');
+        function executarLogout() {
+            localStorage.removeItem('zap_premium_usuario');
             window.location.reload();
+        }
+
+        window.onload = function() {
+            verificarAutenticacao();
         }
     </script>
 </body>
