@@ -51,7 +51,6 @@
     </header>
 
     <main class="max-w-7xl mx-auto p-4 lg:col-span-12 w-full flex-grow">
-        <!-- Conteúdo do App continua igual -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <h2 class="text-xl font-bold mb-4">Bem-vindo ao Painel</h2>
             <p class="text-gray-600">Sistema liberado e operando corretamente.</p>
@@ -59,7 +58,6 @@
     </main>
 
     <script>
-        // --- FLUXO DE ACESSO ---
         function verificarEstado() {
             const ehAtivado = localStorage.getItem('zap_ativado') === "true";
             const sessaoAtiva = sessionStorage.getItem('zap_sessao_ativa') === "true";
@@ -73,7 +71,6 @@
             const desc = document.getElementById('descBloqueio');
 
             if (!ehAtivado) {
-                // FLUXO DE ATIVAÇÃO
                 tela.style.display = "flex";
                 titulo.innerText = "Ativação do Sistema";
                 desc.innerText = "Insira a chave recebida e crie uma senha para seu uso pessoal.";
@@ -82,7 +79,6 @@
                 inputLogin.classList.add('hidden');
                 btn.innerText = "Ativar e Acessar";
             } else if (!sessaoAtiva) {
-                // FLUXO DE LOGIN
                 tela.style.display = "flex";
                 titulo.innerText = "Login de Acesso";
                 desc.innerText = "Bem-vindo de volta! Digite sua senha.";
@@ -91,7 +87,6 @@
                 inputLogin.classList.remove('hidden');
                 btn.innerText = "Entrar no Sistema";
             } else {
-                // LIBERADO
                 tela.style.display = "none";
             }
         }
@@ -100,24 +95,28 @@
             const ehAtivado = localStorage.getItem('zap_ativado') === "true";
 
             if (!ehAtivado) {
-                // TENTATIVA DE ATIVAÇÃO
                 const chave = document.getElementById('inputChaveAtivacao').value.trim();
                 const senha = document.getElementById('inputDefinirSenha').value.trim();
 
-                if (!chave || chave.length < 5) return alert("Chave inválida!");
-                if (!senha || senha.length < 4) return alert("Crie uma senha de pelo menos 4 dígitos!");
-
-                // Simulação de validação da chave (aqui você pode adicionar sua lógica de verificação)
-                if (chave.startsWith("ZAP-")) {
-                    localStorage.setItem('zap_ativado', "true");
-                    localStorage.setItem('zap_senha_acesso', senha);
-                    sessionStorage.setItem('zap_sessao_ativa', 'true');
-                    location.reload();
-                } else {
-                    alert("Chave de ativação não reconhecida.");
+                if (!chave || !senha) return alert("Preencha a chave e a senha!");
+                
+                try {
+                    // Decodifica a chave para verificar se é válida
+                    const decodificada = atob(chave); 
+                    
+                    if (decodificada.startsWith("ZAPFACIL-")) {
+                        localStorage.setItem('zap_ativado', "true");
+                        localStorage.setItem('zap_senha_acesso', senha);
+                        sessionStorage.setItem('zap_sessao_ativa', 'true');
+                        location.reload();
+                    } else {
+                        alert("Chave de ativação inválida ou formatada incorretamente.");
+                    }
+                } catch (e) {
+                    alert("Erro: A chave fornecida não está em um formato válido.");
                 }
+
             } else {
-                // TENTATIVA DE LOGIN
                 const senhaDigitada = document.getElementById('inputSenhaLogin').value.trim();
                 const senhaCorreta = localStorage.getItem('zap_senha_acesso');
 
