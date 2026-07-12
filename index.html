@@ -2,50 +2,17 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZapFácil Pro | Login</title>
     <style>
+        /* Estilos mantidos para manter o padrão moderno */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-        body { background-color: #f1f5f9; color: #334155; height: 100vh; display: flex; justify-content: center; align-items: center; }
-
-        /* CARD DE LOGIN (LIMPO) */
-        .card {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            padding: 40px;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        .logo-login { max-width: 220px; margin-bottom: 25px; }
-        
+        body { background-color: #f1f5f9; height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .card { background-color: #ffffff; border: 1px solid #e2e8f0; padding: 40px; border-radius: 16px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .logo-login { max-width: 200px; margin-bottom: 20px; }
         .form-group { text-align: left; margin-bottom: 15px; }
-        .form-group label { font-size: 12px; font-weight: bold; color: #64748b; margin-bottom: 5px; display: block; text-transform: uppercase; }
-        
-        .input-field {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            background: #f8fafc;
-            font-size: 14px;
-        }
-        
-        .btn-login {
-            width: 100%;
-            padding: 14px;
-            background-color: #059669;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            text-transform: uppercase;
-        }
-        .btn-login:hover { background-color: #047857; }
+        .form-group label { font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 5px; display: block; text-transform: uppercase; }
+        .input-field { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; background: #f8fafc; }
+        .btn-login { width: 100%; padding: 14px; background-color: #059669; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -53,18 +20,65 @@
     <div class="card">
         <img src="pro sem fundo.png" alt="ZapFácil Pro" class="logo-login">
         
-        <div class="form-group">
-            <label>Chave de Ativação</label>
-            <input type="text" class="input-field" placeholder="Insira a chave...">
-        </div>
-        
-        <div class="form-group">
-            <label>Senha</label>
-            <input type="password" class="input-field" placeholder="Sua senha...">
-        </div>
+        <div id="areaLogin">
+            <!-- Dinâmico: O título e os campos mudam dependendo se já foi ativado ou não -->
+            <h3 id="tituloAcesso" style="margin-bottom: 20px; color: #1e293b;">Carregando...</h3>
+            
+            <div id="camposAtivacao" class="hidden">
+                <div class="form-group">
+                    <label>Chave de Ativação</label>
+                    <input type="text" id="inputChave" class="input-field" placeholder="Insira sua chave...">
+                </div>
+            </div>
 
-        <button class="btn-login">ACESSAR SISTEMA</button>
+            <div class="form-group">
+                <label id="labelSenha">Definir Senha de Acesso</label>
+                <input type="password" id="inputSenha" class="input-field" placeholder="Sua senha...">
+            </div>
+
+            <button class="btn-login" onclick="processarAcesso()">CONFIRMAR</button>
+        </div>
     </div>
 
+    <script>
+        // Lógica de verificação
+        const configurado = localStorage.getItem('zap_configurado');
+
+        function atualizarTela() {
+            if (configurado) {
+                document.getElementById('tituloAcesso').innerText = "Bem-vindo de volta!";
+                document.getElementById('labelSenha').innerText = "Digite sua senha";
+                document.getElementById('camposAtivacao').style.display = 'none';
+            } else {
+                document.getElementById('tituloAcesso').innerText = "Primeira Ativação";
+                document.getElementById('camposAtivacao').style.display = 'block';
+            }
+        }
+
+        function processarAcesso() {
+            const senha = document.getElementById('inputSenha').value;
+            
+            if (!configurado) {
+                const chave = document.getElementById('inputChave').value;
+                // AQUI VOCÊ PODE ADICIONAR UMA VALIDAÇÃO DE CHAVE REAL
+                if (chave && senha) {
+                    localStorage.setItem('zap_configurado', 'true');
+                    localStorage.setItem('zap_senha', senha); // CUIDADO: em produção, use criptografia
+                    alert("Sistema ativado com sucesso!");
+                    window.location.reload();
+                }
+            } else {
+                const senhaSalva = localStorage.getItem('zap_senha');
+                if (senha === senhaSalva) {
+                    alert("Acesso liberado!");
+                    // Aqui você redireciona para a página interna com o header
+                } else {
+                    alert("Senha incorreta.");
+                }
+            }
+        }
+
+        atualizarTela();
+    </script>
 </body>
 </html>
